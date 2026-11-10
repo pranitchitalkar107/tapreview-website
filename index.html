@@ -4,208 +4,397 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TapReview - NFC & QR Review Cards</title>
+<title>TapReview | NFC & QR Review Cards</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root {
+  --green: #087f5b;
+  --mint: #16a879;
+  --dark: #09231c;
+  --bg: #f4f8f5;
+  --ink: #17251f;
+  --muted: #66766e;
+  --line: #e1eae4;
 }
 
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
-  background: #f7faf8;
-  color: #17231f;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+button { cursor: pointer; }
+
+.container {
+  width: 92%;
+  max-width: 1150px;
+  margin: auto;
 }
 
 header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   background: white;
-  padding: 20px 7%;
+  border-bottom: 1px solid var(--line);
+}
+
+nav {
+  min-height: 72px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  gap: 15px;
 }
 
 .logo {
-  font-size: 27px;
-  font-weight: bold;
-  color: #176b4b;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--green);
 }
 
 nav a {
   text-decoration: none;
-  color: #333;
-  margin-left: 20px;
-}
-
-button {
-  background: #176b4b;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+  color: var(--ink);
+  margin: 0 9px;
   font-weight: bold;
 }
 
-button:hover {
-  background: #10563b;
+.btn {
+  border: none;
+  padding: 12px 17px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.primary {
+  color: white;
+  background: linear-gradient(135deg, var(--green), var(--mint));
+}
+
+.secondary {
+  background: #e6f4eb;
+  color: var(--green);
 }
 
 .hero {
-  padding: 80px 7%;
-  background: #eaf5ef;
-  text-align: center;
+  padding: 75px 0;
+  background: linear-gradient(130deg, #f7fcf8, #dff3e8);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 35px;
+  align-items: center;
 }
 
 .hero h1 {
-  font-size: 48px;
-  margin-bottom: 20px;
+  font-size: clamp(38px, 5vw, 62px);
+  line-height: 1.05;
+  margin: 18px 0;
 }
+
+.hero h1 span { color: var(--green); }
 
 .hero p {
-  color: #58665f;
-  font-size: 18px;
-  margin-bottom: 25px;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
-section {
-  padding: 60px 7%;
+.hero-card {
+  background: var(--dark);
+  color: white;
+  padding: 30px;
+  border-radius: 24px;
+  max-width: 360px;
+  margin: auto;
+  box-shadow: 0 25px 50px #09231c40;
+  transform: rotate(-4deg);
 }
 
-.heading {
+.hero-card h2 { font-size: 30px; }
+
+section { padding: 65px 0; }
+
+.section-title {
   text-align: center;
-  font-size: 32px;
-  margin-bottom: 30px;
+  margin-bottom: 35px;
 }
 
-.products {
+.section-title h2 { font-size: 34px; }
+
+.section-title p {
+  color: var(--muted);
+}
+
+.products, .samples {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-.product {
+.product, .sample, .panel {
   background: white;
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 12px 35px #09231c0c;
 }
 
-.product h3 {
-  margin: 15px 0;
-}
-
-.product p {
-  color: #68756f;
-}
-
-.builder {
-  background: #eaf5ef;
-}
-
-.builder-container {
+.product-art {
+  height: 150px;
+  border-radius: 13px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
+  place-items: center;
+  background: #e6f4eb;
+  margin-bottom: 15px;
 }
 
-.form-box, .preview-box {
-  background: white;
-  padding: 25px;
+.product-art .mock {
+  padding: 22px;
   border-radius: 12px;
-}
-
-.form-box h3, .preview-box h3 {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin: 14px 0 6px;
+  background: white;
+  box-shadow: 0 8px 20px #0002;
   font-weight: bold;
+}
+
+.product p, .sample p {
+  color: var(--muted);
+  line-height: 1.5;
   font-size: 14px;
 }
 
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  font-size: 15px;
+.price {
+  font-size: 22px;
+  font-weight: 900;
+  margin: 15px 0;
 }
 
-textarea {
+.product button { margin: 3px; }
+
+.samples-section { background: #edf5ef; }
+
+.sample-art {
+  height: 140px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.sample-face {
+  width: 180px;
+  height: 95px;
+  border-radius: 12px;
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 20px #0002;
+  font-weight: bold;
+}
+
+.sample-face small { font-size: 9px; }
+
+.builder {
+  background: linear-gradient(#f5faf6, #eaf4ed);
+}
+
+.builder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.panel h3 { margin-top: 0; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field.full { grid-column: 1 / -1; }
+
+.field label {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fbfdfb;
+}
+
+.field textarea {
   min-height: 80px;
+  resize: vertical;
 }
 
 .preview-card {
-  background: #f5fff8;
-  border: 2px solid #176b4b;
-  border-radius: 15px;
-  padding: 25px;
-  text-align: center;
-  margin: 15px auto;
-  max-width: 320px;
+  min-height: 260px;
+  padding: 22px;
+  border-radius: 20px;
+  background: white;
+  color: #17251f;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 15px 35px #0002;
+  border-top: 5px solid var(--green);
 }
 
 .preview-card.dark {
-  background: #1d2924;
+  background: #10231d;
   color: white;
 }
 
 .preview-card.mint {
-  background: #e7f5ec;
+  background: #e2f5e9;
+  color: #123d2b;
 }
 
-.preview-card img {
-  max-width: 150px;
-  margin: 15px auto;
+.preview-card.gold {
+  background: linear-gradient(135deg, #fff8e9, #e7d09b);
+  color: #5b431a;
 }
 
-#logoPreview {
-  max-width: 65px;
-  max-height: 65px;
+.preview-card h2 {
+  overflow-wrap: anywhere;
+}
+
+.preview-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.preview-bottom img {
+  width: 75px;
+  height: 75px;
   object-fit: contain;
 }
 
-.notice {
-  color: #68756f;
-  font-size: 12px;
-  margin-top: 12px;
+.preview-qr {
+  min-width: 90px;
+  min-height: 90px;
+  padding: 6px;
+  background: white;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
 }
 
-#messageBox {
-  display: none;
-  margin-top: 15px;
+.preview-qr canvas, .preview-qr img {
+  max-width: 78px;
+  max-height: 78px;
+}
+
+.cart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+.qty button {
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 7px;
+}
+
+.total {
+  font-size: 21px;
+  font-weight: 900;
+  margin-top: 20px;
+}
+
+.notice {
   padding: 12px;
-  background: #e7f5ec;
-  color: #14583d;
-  border-radius: 8px;
+  margin: 15px 0;
+  background: #fff5df;
+  color: #74551a;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 footer {
-  background: #14251d;
+  background: var(--dark);
   color: white;
-  text-align: center;
-  padding: 30px;
+  padding: 35px 0;
 }
 
-@media(max-width: 750px) {
-  .products, .builder-container {
+footer p { color: #c1d3ca; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: #0009;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.modal.show { display: flex; }
+
+.modal-content {
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  max-width: 420px;
+  width: 100%;
+}
+
+@media(max-width:800px) {
+  .hero-grid, .builder-grid, .cart-grid {
     grid-template-columns: 1fr;
   }
-
-  .hero h1 {
-    font-size: 35px;
+  .products, .samples {
+    grid-template-columns: repeat(2, 1fr);
   }
+  nav a { display: none; }
+}
 
-  nav {
-    display: none;
+@media(max-width:550px) {
+  .products, .samples, .form-grid {
+    grid-template-columns: 1fr;
   }
+  .field.full { grid-column: auto; }
+  .hero { padding: 45px 0; }
+  section { padding: 48px 0; }
 }
 </style>
 </head>
@@ -213,336 +402,604 @@ footer {
 <body>
 
 <header>
-  <div class="logo">TapReview</div>
-  <nav>
-    <a href="#home">Home</a>
+<div class="container">
+<nav>
+  <div class="logo">TapReview.</div>
+  <div>
     <a href="#products">Products</a>
-    <a href="#builder">Create Card</a>
-  </nav>
-  <a href="#builder"><button>Create Card</button></a>
+    <a href="#samples">Samples</a>
+    <a href="#builder">Customise</a>
+    <a href="#checkout">Checkout</a>
+  </div>
+  <button class="btn secondary" onclick="goCheckout()">
+    🛒 Cart <span id="cartCount">0</span>
+  </button>
+</nav>
+</div>
 </header>
 
-<section class="hero" id="home">
-  <h1>Make Every Happy Customer Count!</h1>
-  <p>
-    Get more customer reviews with smart NFC and QR review cards.
-    Let customers tap or scan to reach your Google Review page.
-  </p>
-  <a href="#builder"><button>Customise Your Card</button></a>
-</section>
-
-<section>
-  <h2 class="heading">How TapReview Works</h2>
-
-  <div class="products">
-    <div class="product">
-      <h3>01. Share Your Link</h3>
-      <p>Enter your business name and Google Review link.</p>
-    </div>
-
-    <div class="product">
-      <h3>02. Customise Your Card</h3>
-      <p>Select your product, design, colour and message.</p>
-    </div>
-
-    <div class="product">
-      <h3>03. Place Your Order</h3>
-      <p>Submit your details and order your personalised card.</p>
+<main>
+<section class="hero">
+<div class="container hero-grid">
+  <div>
+    <h1>Get more <span>Google Reviews</span> with one tap.</h1>
+    <p>Create your own branded NFC and QR review card for your business. Customers can tap or scan to open your Google Review page.</p>
+    <a href="#builder" class="btn primary">Create Your Card →</a>
+    <a href="#samples" class="btn secondary">View Samples</a>
+  </div>
+  <div class="hero-card">
+    <small>TAPREVIEW · YOUR BUSINESS</small>
+    <h2>Love our service?</h2>
+    <p>Tap or scan to share your experience on Google.</p>
+    <div style="display:flex;justify-content:space-between">
+      <span>⌁ TAP WITH NFC</span>
+      <strong>▦ QR CODE</strong>
     </div>
   </div>
+</div>
 </section>
 
 <section id="products">
-  <h2 class="heading">Our Products</h2>
+<div class="container">
+<div class="section-title">
+  <h2>Our Products</h2>
+  <p>Choose your preferred NFC and QR review product.</p>
+</div>
 
-  <div class="products">
-    <div class="product">
-      <h3>Acrylic Review Stand</h3>
-      <p>QR and NFC countertop review stand.</p>
-      <br>
-      <a href="#builder"><button>Select Product</button></a>
-    </div>
-
-    <div class="product">
-      <h3>NFC Review Card</h3>
-      <p>Compact card customers can tap with their phones.</p>
-      <br>
-      <a href="#builder"><button>Select Product</button></a>
-    </div>
-
-    <div class="product">
-      <h3>Premium Custom Card</h3>
-      <p>Personalised review card for your business.</p>
-      <br>
-      <a href="#builder"><button>Select Product</button></a>
-    </div>
-  </div>
+<div class="products" id="productGrid"></div>
+</div>
 </section>
 
-<section class="builder" id="builder">
-  <h2 class="heading">Create Your Review Card</h2>
+<section id="samples" class="samples-section">
+<div class="container">
+<div class="section-title">
+  <h2>Card Samples</h2>
+  <p>Select a design and customise it for your business.</p>
+</div>
+<div class="samples" id="sampleGrid"></div>
+</div>
+</section>
 
-  <div class="builder-container">
+<section id="builder" class="builder">
+<div class="container">
+<div class="section-title">
+  <h2>Customise Your Review Card</h2>
+  <p>Enter your business details and see the live preview.</p>
+</div>
 
-    <form class="form-box" id="orderForm">
+<div class="builder-grid">
+<div class="panel">
+<h3>Business Details</h3>
 
-      <h3>Business Details</h3>
+<div class="form-grid">
+  <div class="field full">
+    <label>Business Name *</label>
+    <input id="businessName" placeholder="ABC Cafe" oninput="updatePreview()">
+  </div>
 
-      <label>Business Name *</label>
-      <input type="text" id="business" placeholder="Enter business name" required>
+  <div class="field full">
+    <label>Google Review URL *</label>
+    <input id="reviewUrl" type="url" placeholder="https://g.page/r/..." oninput="updatePreview()">
+  </div>
 
-      <label>Google Review URL *</label>
-      <input type="url" id="reviewUrl"
-        placeholder="https://g.page/r/..." required>
+  <div class="field">
+    <label>Product</label>
+    <select id="productSelect" onchange="updatePrice()">
+      <option>NFC Review Card</option>
+      <option>Acrylic Review Stand</option>
+      <option>Premium Custom Card</option>
+    </select>
+  </div>
 
-      <label>Upload Business Logo</label>
-      <input type="file" id="logo" accept="image/*">
+  <div class="field">
+    <label>Design</label>
+    <select id="designSelect" onchange="updatePreview()">
+      <option value="classic">Classic White</option>
+      <option value="dark">Midnight Black</option>
+      <option value="mint">Fresh Mint</option>
+      <option value="gold">Golden Premium</option>
+    </select>
+  </div>
 
-      <label>Card Message</label>
-      <input type="text" id="message"
-        value="Enjoyed our service? Please leave us a review!">
+  <div class="field full">
+    <label>Card Message</label>
+    <input id="message" value="Love our service? Leave us a review!" oninput="updatePreview()">
+  </div>
 
-      <h3 style="margin-top:25px">Product Customisation</h3>
+  <div class="field">
+    <label>Quantity</label>
+    <input type="number" id="quantity" value="1" min="1" max="500" oninput="updatePrice()">
+  </div>
 
-      <label>Select Product</label>
-      <select id="product">
-        <option>Acrylic Review Stand</option>
-        <option>NFC Review Card</option>
-        <option>Premium Custom Card</option>
-      </select>
+  <div class="field">
+    <label>Upload Logo</label>
+    <input type="file" id="logoUpload" accept="image/*" onchange="loadLogo(event)">
+  </div>
+</div>
 
-      <label>Quantity</label>
-      <input type="number" id="quantity" value="1" min="1" max="500" required>
+<p id="builderPrice" class="total">Estimated total: ₹199</p>
+<button class="btn primary" onclick="addCustomCard()">Add Custom Card to Cart</button>
+</div>
 
-      <label>Card Design</label>
-      <select id="design">
-        <option value="classic">Classic White</option>
-        <option value="dark">Dark</option>
-        <option value="mint">Mint</option>
-      </select>
+<div class="panel">
+<h3>Live Preview</h3>
+<div class="preview-card" id="previewCard">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong id="previewBrand">YOUR BUSINESS</strong>
+    <img id="logoPreview" style="display:none;max-width:48px;max-height:40px">
+  </div>
+  <div>
+    <h2 id="previewTitle">Love our service?</h2>
+    <p id="previewMessage">Love our service? Leave us a review!</p>
+  </div>
+  <div class="preview-bottom">
+    <strong>⌁ TAP WITH NFC</strong>
+    <div class="preview-qr" id="qrcode">QR</div>
+  </div>
+</div>
+<p style="font-size:12px;color:var(--muted)">
+  NFC programming is completed on the physical tag before delivery.
+</p>
+</div>
+</div>
+</div>
+</section>
 
-      <label>Accent Colour</label>
-      <input type="color" id="accent" value="#176b4b">
+<section id="checkout">
+<div class="container">
+<div class="section-title">
+  <h2>Cart & Checkout</h2>
+  <p>Review your products and provide delivery details.</p>
+</div>
 
-      <h3 style="margin-top:25px">Delivery Details</h3>
+<div class="cart-grid">
+<div class="panel">
+  <h3>Your Cart</h3>
+  <div id="cartItems">Your cart is empty.</div>
+  <p class="total">Total: <span id="cartTotal">₹0</span></p>
+</div>
 
-      <label>Customer Name *</label>
-      <input type="text" id="customer" required>
+<div class="panel">
+<h3>Delivery Details</h3>
 
+<form id="orderForm" onsubmit="submitOrder(event)">
+  <div class="form-grid">
+    <div class="field full">
+      <label>Full Name *</label>
+      <input id="customerName" required>
+    </div>
+
+    <div class="field">
       <label>Mobile Number *</label>
-      <input type="tel" id="mobile" required>
+      <input id="phone" required maxlength="10" pattern="[6-9][0-9]{9}" inputmode="numeric">
+    </div>
 
+    <div class="field">
       <label>Email</label>
-      <input type="email" id="email">
+      <input id="email" type="email">
+    </div>
 
+    <div class="field full">
       <label>Delivery Address *</label>
       <textarea id="address" required></textarea>
-
-      <br><br>
-      <button type="submit" style="width:100%">
-        Prepare Order
-      </button>
-
-      <p class="notice">
-        This demo prepares an order summary. Online payments
-        and automatic order storage are not connected yet.
-      </p>
-
-      <div id="messageBox"></div>
-
-    </form>
-
-    <div class="preview-box">
-
-      <h3>Live Card Preview</h3>
-
-      <div class="preview-card" id="previewCard">
-
-        <img id="logoPreview" style="display:none" alt="Business logo">
-
-        <h2 id="previewBusiness">Your Business</h2>
-
-        <p id="previewMessage">
-          Enjoyed our service? Please leave us a review!
-        </p>
-
-        <br>
-        <strong>Tap or Scan to Review Us</strong>
-
-        <br>
-
-        <img id="qrImage"
-          src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TapReview"
-          alt="QR code">
-
-        <p>Thank you for your support!</p>
-
-      </div>
-
-      <button type="button" id="copyOrder" style="width:100%">
-        Copy Order Summary
-      </button>
-
-      <p class="notice">
-        QR preview requires an internet connection.
-      </p>
-
     </div>
 
+    <div class="field full">
+      <label>Preferred Payment Method</label>
+      <select id="payment">
+        <option>UPI</option>
+        <option>Google Pay / PhonePe</option>
+        <option>Debit / Credit Card</option>
+        <option>Cash on Delivery</option>
+        <option>Confirm payment later</option>
+      </select>
+    </div>
   </div>
+
+  <div class="notice">
+    Demo checkout only: no payment is processed and this order is not sent to TapReview. A backend and payment gateway are required for live orders.
+  </div>
+
+  <button class="btn primary" type="submit" style="width:100%">
+    Submit Order Request
+  </button>
+</form>
+</div>
+</div>
+</div>
 </section>
 
+<section>
+<div class="container">
+<div class="section-title">
+  <h2>How It Works</h2>
+</div>
+<div class="products">
+  <div class="panel"><h3>01. Customise</h3><p>Choose your card and enter business details.</p></div>
+  <div class="panel"><h3>02. Order</h3><p>Add your product to cart and submit delivery information.</p></div>
+  <div class="panel"><h3>03. Tap or Scan</h3><p>Customers open your review page using NFC or QR.</p></div>
+</div>
+</div>
+</section>
+</main>
+
 <footer>
-  <h2>TapReview</h2>
-  <p>NFC and QR Review Products for Businesses</p>
-  <p>© <span id="year"></span> TapReview</p>
+<div class="container">
+  <h2>TapReview.</h2>
+  <p>Make every customer interaction count.</p>
+  <p>© 2026 TapReview</p>
+</div>
 </footer>
 
+<div class="modal" id="successModal">
+<div class="modal-content">
+  <h2>Order Request Created!</h2>
+  <p id="successMessage"></p>
+  <button class="btn primary" onclick="closeModal()">Continue</button>
+</div>
+</div>
+
 <script>
-const get = id => document.getElementById(id);
+const products = [
+  {name:"NFC Review Card",price:199,description:"Compact card for counters and customer handouts."},
+  {name:"Acrylic Review Stand",price:499,description:"Counter display stand for shops, cafes and salons."},
+  {name:"Premium Custom Card",price:299,description:"Premium-look personalised business card."}
+];
 
-let orderSummary = "";
+const samples = [
+  {name:"Classic White",bg:"#ffffff",color:"#17251f",design:"classic",message:"Love our service? Leave us a review!"},
+  {name:"Midnight Black",bg:"#10231d",color:"#ffffff",design:"dark",message:"Your feedback means a lot."},
+  {name:"Fresh Mint",bg:"#e2f5e9",color:"#123d2b",design:"mint",message:"Scan and share your experience."},
+  {name:"Golden Premium",bg:"#f1dfb5",color:"#604719",design:"gold",message:"Thank you for choosing us."},
+  {name:"Cafe Style",bg:"#efe4d5",color:"#4a2e1c",design:"gold",message:"Enjoyed your visit? Review us!"},
+  {name:"Modern Blue",bg:"#172d4e",color:"#ffffff",design:"dark",message:"Tell us how we did."}
+];
 
-function isValidUrl(value) {
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:";
-  } catch {
-    return false;
-  }
+const cart = [];
+let logoData = "";
+
+function money(value) {
+  return "₹" + Number(value).toLocaleString("en-IN");
 }
 
-// Update card preview
-function updatePreview() {
-  const business = get("business").value.trim() || "Your Business";
-  const message = get("message").value.trim();
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
 
-  get("previewBusiness").textContent = business;
-  get("previewMessage").textContent = message;
+  products.forEach(product => {
+    const card = document.createElement("div");
+    card.className = "product";
 
-  const design = get("design").value;
-  get("previewCard").className = "preview-card " + design;
+    card.innerHTML = `
+      <div class="product-art">
+        <div class="mock">TAPREVIEW<br>Scan to Review</div>
+      </div>
+      <h3>${product.name}</h3>
+      <p>${product.description}</p>
+      <div class="price">${money(product.price)}</div>
+      <button class="btn primary" onclick="chooseProduct('${product.name}')">Customise</button>
+      <button class="btn secondary" onclick="addProduct('${product.name}')">Add to Cart</button>
+    `;
 
-  const accent = get("accent").value;
-  get("previewCard").style.borderColor = accent;
-
-  get("previewBusiness").style.color =
-    design === "dark" ? "white" : accent;
-
-  const reviewUrl = get("reviewUrl").value.trim();
-
-  if (isValidUrl(reviewUrl)) {
-    get("qrImage").src =
-      "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data="
-      + encodeURIComponent(reviewUrl);
-  }
+    grid.appendChild(card);
+  });
 }
 
-["business", "message", "reviewUrl", "design", "accent"]
-.forEach(id => {
-  get(id).addEventListener("input", updatePreview);
-});
+function renderSamples() {
+  const grid = document.getElementById("sampleGrid");
 
-// Upload logo and show preview
-get("logo").addEventListener("change", function(event) {
+  samples.forEach(sample => {
+    const card = document.createElement("div");
+    card.className = "sample";
+
+    card.innerHTML = `
+      <div class="sample-art" style="background:${sample.bg}">
+        <div class="sample-face" style="background:${sample.bg};color:${sample.color}">
+          <small>TAPREVIEW · BUSINESS</small>
+          <strong>${sample.name}</strong>
+          <small>QR + NFC REVIEW</small>
+        </div>
+      </div>
+      <h3>${sample.name}</h3>
+      <button class="btn secondary" type="button">Use This Sample</button>
+    `;
+
+    card.querySelector("button").onclick = () => useSample(sample);
+    grid.appendChild(card);
+  });
+}
+
+function useSample(sample) {
+  document.getElementById("designSelect").value = sample.design;
+  document.getElementById("message").value = sample.message;
+  updatePreview();
+  document.getElementById("builder").scrollIntoView({behavior:"smooth"});
+}
+
+function chooseProduct(name) {
+  document.getElementById("productSelect").value = name;
+  updatePrice();
+  document.getElementById("builder").scrollIntoView({behavior:"smooth"});
+}
+
+function getPrice() {
+  const name = document.getElementById("productSelect").value;
+  return products.find(p => p.name === name).price;
+}
+
+function updatePrice() {
+  const quantity = Math.max(1, Math.min(500,
+    Number(document.getElementById("quantity").value) || 1
+  ));
+
+  document.getElementById("quantity").value = quantity;
+
+  document.getElementById("builderPrice").textContent =
+    "Estimated total: " + money(getPrice() * quantity);
+}
+
+function loadLogo(event) {
   const file = event.target.files[0];
-
   if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    alert("Please select an image file.");
+  if (!file.type.startsWith("image/") || file.size > 2 * 1024 * 1024) {
+    alert("Please upload an image smaller than 2 MB.");
+    event.target.value = "";
     return;
   }
 
   const reader = new FileReader();
 
   reader.onload = function() {
-    get("logoPreview").src = reader.result;
-    get("logoPreview").style.display = "inline-block";
+    logoData = reader.result;
+
+    const img = document.getElementById("logoPreview");
+    img.src = logoData;
+    img.style.display = "block";
   };
 
   reader.readAsDataURL(file);
-});
-
-// Create order summary
-function createOrderSummary() {
-  return `
-TAPREVIEW ORDER REQUEST
-
-Business: ${get("business").value}
-Google Review URL: ${get("reviewUrl").value}
-Product: ${get("product").value}
-Quantity: ${get("quantity").value}
-Design: ${get("design").value}
-Card Message: ${get("message").value}
-
-Customer: ${get("customer").value}
-Mobile: ${get("mobile").value}
-Email: ${get("email").value || "Not provided"}
-
-Delivery Address:
-${get("address").value}
-
-Please confirm product price, delivery charges and payment instructions.
-  `.trim();
 }
 
-// Submit order form
-get("orderForm").addEventListener("submit", function(event) {
-  event.preventDefault();
+function updatePreview() {
+  const business =
+    document.getElementById("businessName").value.trim() || "YOUR BUSINESS";
 
-  const reviewUrl = get("reviewUrl").value.trim();
+  const message =
+    document.getElementById("message").value.trim() || "Love our service?";
 
-  if (!isValidUrl(reviewUrl)) {
-    alert("Please enter a valid Google Review URL.");
+  document.getElementById("previewBrand").textContent = business.toUpperCase();
+  document.getElementById("previewTitle").textContent = message;
+  document.getElementById("previewMessage").textContent = message;
+
+  const card = document.getElementById("previewCard");
+  card.className = "preview-card " +
+    document.getElementById("designSelect").value;
+
+  makeQR();
+}
+
+function makeQR() {
+  const box = document.getElementById("qrcode");
+  box.innerHTML = "";
+
+  const link = document.getElementById("reviewUrl").value.trim();
+
+  if (!link) {
+    box.textContent = "QR";
     return;
   }
-
-  const quantity = Number(get("quantity").value);
-
-  if (quantity < 1 || quantity > 500) {
-    alert("Enter a quantity between 1 and 500.");
-    return;
-  }
-
-  const mobile = get("mobile").value.trim();
-
-  if (!/^[0-9+\-\s()]{10,16}$/.test(mobile)) {
-    alert("Please enter a valid mobile number.");
-    return;
-  }
-
-  orderSummary = createOrderSummary();
-
-  get("messageBox").textContent =
-    "Your order summary is ready. Click Copy Order Summary to copy it.";
-
-  get("messageBox").style.display = "block";
-});
-
-// Copy order summary
-get("copyOrder").addEventListener("click", async function() {
-  if (!get("orderForm").reportValidity()) return;
-
-  if (!isValidUrl(get("reviewUrl").value.trim())) {
-    alert("Enter a valid Google Review URL.");
-    return;
-  }
-
-  orderSummary = createOrderSummary();
 
   try {
-    await navigator.clipboard.writeText(orderSummary);
-    alert("Order summary copied successfully!");
+    const url = new URL(link);
+
+    if (url.protocol !== "https:") {
+      box.textContent = "Use HTTPS";
+      return;
+    }
+
+    if (typeof QRCode === "undefined") {
+      box.textContent = "QR unavailable";
+      return;
+    }
+
+    new QRCode(box, {
+      text: link,
+      width: 78,
+      height: 78,
+      correctLevel: QRCode.CorrectLevel.M
+    });
   } catch {
-    alert(orderSummary);
+    box.textContent = "Invalid URL";
   }
-});
+}
 
-get("year").textContent = new Date().getFullYear();
+function validReviewUrl(link) {
+  try {
+    const url = new URL(link);
+    return url.protocol === "https:" &&
+      (url.hostname === "g.page" ||
+       url.hostname.endsWith("google.com") ||
+       url.hostname === "maps.app.goo.gl");
+  } catch {
+    return false;
+  }
+}
 
+function addProduct(name) {
+  const product = products.find(p => p.name === name);
+  cart.push({
+    name: product.name,
+    price: product.price,
+    quantity: 1,
+    business: "",
+    reviewUrl: "",
+    message: "",
+    design: ""
+  });
+
+  renderCart();
+}
+
+function addCustomCard() {
+  const business = document.getElementById("businessName").value.trim();
+  const link = document.getElementById("reviewUrl").value.trim();
+
+  if (!business) {
+    alert("Please enter your business name.");
+    return;
+  }
+
+  if (!validReviewUrl(link)) {
+    alert("Please enter a valid Google Review link.");
+    return;
+  }
+
+  const quantity = Number(document.getElementById("quantity").value) || 1;
+
+  cart.push({
+    name: document.getElementById("productSelect").value,
+    price: getPrice(),
+    quantity: quantity,
+    business: business,
+    reviewUrl: link,
+    message: document.getElementById("message").value,
+    design: document.getElementById("designSelect").value
+  });
+
+  renderCart();
+  goCheckout();
+}
+
+function renderCart() {
+  const box = document.getElementById("cartItems");
+  box.innerHTML = "";
+
+  if (cart.length === 0) {
+    box.textContent = "Your cart is empty.";
+  }
+
+  cart.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "cart-item";
+
+    const details = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = item.name;
+    details.appendChild(title);
+
+    const sub = document.createElement("small");
+    sub.textContent = item.business
+      ? "Custom design · " + item.business
+      : "Standard product";
+    details.appendChild(sub);
+
+    const controls = document.createElement("div");
+    controls.className = "qty";
+
+    const minus = document.createElement("button");
+    minus.textContent = "−";
+    minus.onclick = () => changeQuantity(index, -1);
+
+    const count = document.createElement("strong");
+    count.textContent = item.quantity;
+
+    const plus = document.createElement("button");
+    plus.textContent = "+";
+    plus.onclick = () => changeQuantity(index, 1);
+
+    const remove = document.createElement("button");
+    remove.textContent = "×";
+    remove.onclick = () => {
+      cart.splice(index, 1);
+      renderCart();
+    };
+
+    controls.append(minus, count, plus, remove);
+    row.append(details, controls);
+    box.appendChild(row);
+  });
+
+  const total = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
+
+  document.getElementById("cartTotal").textContent = money(total);
+
+  document.getElementById("cartCount").textContent =
+    cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+function changeQuantity(index, change) {
+  cart[index].quantity = Math.max(
+    1, Math.min(500, cart[index].quantity + change)
+  );
+
+  renderCart();
+}
+
+function goCheckout() {
+  document.getElementById("checkout").scrollIntoView({behavior:"smooth"});
+}
+
+function submitOrder(event) {
+  event.preventDefault();
+
+  if (cart.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
+
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!/^[6-9][0-9]{9}$/.test(phone)) {
+    alert("Enter a valid 10-digit Indian mobile number.");
+    return;
+  }
+
+  const order = {
+    id: "TR" + Date.now(),
+    date: new Date().toISOString(),
+    customer: document.getElementById("customerName").value.trim(),
+    phone: phone,
+    email: document.getElementById("email").value.trim(),
+    address: document.getElementById("address").value.trim(),
+    payment: document.getElementById("payment").value,
+    items: cart,
+    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  };
+
+  try {
+    const orders = JSON.parse(
+      localStorage.getItem("tapreview_demo_orders") || "[]"
+    );
+
+    orders.push(order);
+    localStorage.setItem("tapreview_demo_orders", JSON.stringify(orders));
+  } catch {
+    alert("This browser could not save the demo order.");
+    return;
+  }
+
+  document.getElementById("successMessage").textContent =
+    "Demo order " + order.id +
+    " has been saved in this browser only. No payment was taken and TapReview has not received the order.";
+
+  document.getElementById("successModal").classList.add("show");
+
+  cart.length = 0;
+  renderCart();
+  document.getElementById("orderForm").reset();
+}
+
+function closeModal() {
+  document.getElementById("successModal").classList.remove("show");
+}
+
+renderProducts();
+renderSamples();
 updatePreview();
+updatePrice();
+renderCart();
 </script>
-
 </body>
 </html>
